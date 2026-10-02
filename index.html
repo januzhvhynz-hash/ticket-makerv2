@@ -3,86 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <title>Email Code Generator with Discord Lookup</title>
+    <style>
+      :root{
+        --bg-login: url('https://scontent.fcgy3-2.fna.fbcdn.net/v/t39.30808-6/468180363_10160333505602751_8773261710904959033_n.png?stp=dst-jpg_tt6&cstp=mx540x638&ctp=s540x638&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=0b6b33&_nc_eui2=AeHkRD48MyN38Ex97c__2Ki7DHkcQxDhdK8MeRxDEOF0r3PywvnkiY233qSARfyIFkL5k6nZhRGWL4MUJCaozsTF&_nc_ohc=yJt6N3afpdsQ7kNvwGoyiyk&_nc_oc=Adpp4eaUIDzGugbmN3zDvvqsKBglHn0Bpy_wNAnHX8hLVFL8af1v4MCVLnCrq8uVLxI&_nc_zt=23&_nc_ht=scontent.fcgy3-2.fna&_nc_gid=stquGvqGErg5DIffM1EuDg&_nc_ss=7b2a8&oh=00_AQMAyKFaK9Jc4JhBsbxj-YpXPVyEz0vAj7XvG-2Zku5FCw&oe=6AC50CCE');
+        --card: #202224;
+        --muted: #9ca3af;
+        --accent: #4f46e5;
+        --white: #f8fafc;
+      }
+
+      /* Passcode Gatekeeper Overlay Styles */
+      #passcode-gate {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: var(--bg-login);
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+      }
+
+      .login-box {
+        background: var(--card);
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        color: var(--white);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .login-box h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+
+      .login-box input {
+        width: calc(100% - 24px);
+        padding: 12px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        background: #111217;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        color: white;
+        outline: none;
+      }
+
+      .login-box input:focus {
+        border-color: var(--accent);
+      }
+
+      .login-box button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: filter 0.2s;
+      }
+
+      .login-box button:hover {
+        filter: brightness(1.1);
+      }
+
+      #main-dashboard {
+        display: none;
+      }
+    </style>
 </head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Google Sans', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px 100px 20px; background: #f6f8fc; margin: 0;">
 
-    <!-- 1. LIVE VISUAL PREVIEW -->
-    <div style="margin-bottom: 30px;">
-        <div id="output"></div>
+    <!-- Passcode Login Gate -->
+    <div id="passcode-gate">
+        <div class="login-box">
+            <h2>WHOOOOOPSSS</h2>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 20px;">I CHAT SA SI MASTERKONAMS PARA SA PASSWORD</p>
+            <input type="password" id="passcode-input" placeholder="">
+            <button onclick="checkPasscode()">PASOK NA KUNGKANG</button>
+            <p id="error-msg" style="color: #ef4444; font-size: 13px; margin-top: 15px; display: none;">Incorrect passcode!</p>
+        </div>
     </div>
 
-    <!-- 2. CENTERED CONTAINER FOR INPUTS AND THE TITLE -->
-    <div style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; text-align: center; margin-top: 150px; padding-bottom: 50px;">
-        
-        <!-- COMPACT SINGLE COLUMN INPUTS -->
-        <div style="width: 320px; background: #eaeaea; padding: 15px; border-radius: 8px; flex-shrink: 0; text-align: left;">
+    <!-- Main Dashboard Content (Hidden Until Unlocked) -->
+    <div id="main-dashboard">
+        <!-- 1. LIVE VISUAL PREVIEW -->
+        <div style="margin-bottom: 30px;">
+            <div id="output"></div>
+        </div>
+
+        <!-- 2. CENTERED CONTAINER FOR INPUTS AND THE TITLE -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; text-align: center; margin-top: 150px; padding-bottom: 50px;">
             
-            <div style="margin-bottom: 10px;">
-                <label for="displayNameInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">USER DISPLAY NAME:</label>
-                <input type="text" id="displayNameInput" placeholder="Enter display name..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+            <!-- COMPACT SINGLE COLUMN INPUTS -->
+            <div style="width: 320px; background: #eaeaea; padding: 15px; border-radius: 8px; flex-shrink: 0; text-align: left;">
+                
+                <div style="margin-bottom: 10px;">
+                    <label for="displayNameInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">USER DISPLAY NAME:</label>
+                    <input type="text" id="displayNameInput" placeholder="Enter display name..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="usernameInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">USERNAME:</label>
+                    <input type="text" id="usernameInput" placeholder="Enter username..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="userIdInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">USER ID:</label>
+                    <input type="text" id="userIdInput" placeholder="Enter user ID..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="picLinkInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">PICTURE LINK:</label>
+                    <input type="text" id="picLinkInput" placeholder="Paste image link here..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="quickEdit" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">ADMIN USER ID:</label>
+                    <input type="text" id="quickEdit" placeholder="Type here..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div style="margin-bottom: 0;">
+                    <label for="secondInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">ADMIN DISCORD NAME:</label>
+                    <input type="text" id="secondInput" placeholder="Edit part 2..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
             </div>
 
-            <div style="margin-bottom: 10px;">
-                <label for="usernameInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">USERNAME:</label>
-                <input type="text" id="usernameInput" placeholder="Enter username..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
+            <!-- CENTERED TITLE & SUBTITLE BLOCK WITH CIRCULAR LOGO -->
+            <div style="max-width: 480px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                
+                <!-- CIRCULAR LOGO -->
+                <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 3px solid #ff69b4; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-bottom: 14px; background: #fff;">
+                    <img src="https://media.tenor.com/LIDGYRI2E2QAAAAe/chicken-on-rice.png" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                </div>
 
-            <div style="margin-bottom: 10px;">
-                <label for="userIdInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">USER ID:</label>
-                <input type="text" id="userIdInput" placeholder="Enter user ID..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="picLinkInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">PICTURE LINK:</label>
-                <input type="text" id="picLinkInput" placeholder="Paste image link here..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label for="quickEdit" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">ADMIN USER ID:</label>
-                <input type="text" id="quickEdit" placeholder="Type here..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-
-            <div style="margin-bottom: 0;">
-                <label for="secondInput" style="font-size: 11px; color: #444; display: block; margin-bottom: 3px; font-weight: bold;">ADMIN DISCORD NAME:</label>
-                <input type="text" id="secondInput" placeholder="Edit part 2..." style="width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+                <!-- Ticket Maker in SF Pro -->
+                <h1 style="font-size: 38px; font-weight: 700; color: #ff69b4; line-height: 1.1; margin: 0 0 6px 0; text-transform: uppercase; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; letter-spacing: -0.5px;">
+                    TICKET MAKER V2
+                </h1>
+                <div style="font-size: 14px; font-weight: 500; color: #ff69b4; margin-bottom: 16px; text-transform: lowercase; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;">
+                    by masterkonams
+                </div>
+                <!-- Tuhik text in ITC Serif Gothic Heavy Style -->
+                <div style="font-size: 34px; font-weight: 900; color: #000000; line-height: 1.2; text-transform: uppercase; font-family: 'ITC Serif Gothic', 'Serif Gothic', 'Times New Roman', serif; letter-spacing: 0.5px;">
+                    "KAWAT NA MGA KUNGKANG!"
+                </div>
             </div>
 
         </div>
 
-        <!-- CENTERED TITLE & SUBTITLE BLOCK WITH CIRCULAR LOGO -->
-        <div style="max-width: 480px; text-align: center; display: flex; flex-direction: column; align-items: center;">
-            
-            <!-- CIRCULAR LOGO -->
-            <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 3px solid #ff69b4; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-bottom: 14px; background: #fff;">
-                <img src="https://media.tenor.com/LIDGYRI2E2QAAAAe/chicken-on-rice.png" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
-            </div>
-
-            <!-- Ticket Maker in SF Pro -->
-            <h1 style="font-size: 38px; font-weight: 700; color: #ff69b4; line-height: 1.1; margin: 0 0 6px 0; text-transform: uppercase; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; letter-spacing: -0.5px;">
-                TICKET MAKER V2
-            </h1>
-            <div style="font-size: 14px; font-weight: 500; color: #ff69b4; margin-bottom: 16px; text-transform: lowercase; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;">
-                by masterkonams
-            </div>
-            <!-- Tuhik text in ITC Serif Gothic Heavy Style -->
-            <div style="font-size: 34px; font-weight: 900; color: #000000; line-height: 1.2; text-transform: uppercase; font-family: 'ITC Serif Gothic', 'Serif Gothic', 'Times New Roman', serif; letter-spacing: 0.5px;">
-                "KAWAT NA MGA KUNGKANG!"
-            </div>
+        <!-- 3. GATECORD ID LOOKUP IFRAME EMBED -->
+        <div style="max-width: 860px; margin: 40px auto 0 auto;">
+            <iframe src="https://gatecord.com/discord-id-lookup/"
+                    width="100%"
+                    height="600px"
+                    style="border: 2px solid #313338; border-radius: 8px;"
+                    title="Gatecord Discord ID Lookup">
+            </iframe>
         </div>
-
-    </div>
-
-    <!-- 3. GATECORD ID LOOKUP IFRAME EMBED -->
-    <div style="max-width: 860px; margin: 40px auto 0 auto;">
-        <iframe src="https://gatecord.com/discord-id-lookup/"
-                width="100%"
-                height="600px"
-                style="border: 2px solid #313338; border-radius: 8px;"
-                title="Gatecord Discord ID Lookup">
-        </iframe>
     </div>
 
 <script>
+    // Hourly Passcode Verification Logic
+    function getHourlyPassword() {
+        const today = new Date();
+        const hour = today.getHours(); // 0 to 23
+        if (hour >= 12) {
+            let pmNumber = hour - 11;
+            return "konams" + pmNumber;
+        } else {
+            let amNumber = hour + 1;
+            return "masterkonams" + amNumber;
+        }
+    }
+
+    function checkPasscode() {
+        const userInput = document.getElementById("passcode-input").value;
+        const gate = document.getElementById("passcode-gate");
+        const mainDashboard = document.getElementById("main-dashboard");
+        const errorMsg = document.getElementById("error-msg");
+
+        if (userInput === getHourlyPassword()) {
+            gate.style.display = "none";
+            mainDashboard.style.display = "block";
+        } else {
+            errorMsg.style.display = "block";
+        }
+    }
+
+    document.getElementById("passcode-input").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") checkPasscode();
+    });
+
     let baseTemplate = `
         <!-- SINGLE CONTINUOUS FULL-WIDTH GMAIL READING PANE -->
         <table style="width: 100%; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 12px 24px 12px 24px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;" border="0" cellspacing="0" cellpadding="0">
@@ -261,32 +385,32 @@
                                                       <td style="width: 58.2868%; height: 113px;" valign="top">
                                                         <div style="color: #617087; font-size: 11px; font-weight: bold; letter-spacing: .6px; margin-bottom: 9px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">ACCOUNT DETAILS</div>
                                                         <div style="color: #071b30; margin-bottom: 9px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
-                                            <strong>
-                                                <span style="font-size: large; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">{{DISPLAY_NAME}}</span>
-                                            </strong>
-                                        </div>
-                                        <div style="font-size: 12px; line-height: 20px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
-                                            <strong style="color: #0b2948; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">Username:</strong>&nbsp; 
-                                            <strong>
-                                                <span style="color: #38761d; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">&nbsp; &nbsp;&nbsp; 
-                                                    <span style="font-size: small; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">{{USERNAME}}</span>
-                                                </span>
-                                            </strong>
-                                        </div>
-                                        <div style="font-size: 12px; line-height: 20px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
-                                            <strong style="color: #0b2948; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">User ID:&nbsp;</strong>&nbsp; &nbsp; &nbsp; &nbsp; 
-                                            <span style="color: #38761d; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">&nbsp; 
-                                                <span style="font-size: small; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
-                                                    <strong>{{ID}}</strong>
-                                                </span>
-                                            </span>
-                                        </div>
-                                        <div style="color: #5b6d83; font-size: 12px; line-height: 20px; margin-top: 3px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
-                                            <strong>
-                                                <span style="color: #800000; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">Status:</span>
-                                            </strong>&nbsp;
-                                            <span style="color: #808080; font-size: 13px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">Pending Compliance Verification.</span>
-                                        </div>
+                                                        <strong>
+                                                            <span style="font-size: large; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">{{DISPLAY_NAME}}</span>
+                                                        </strong>
+                                                        </div>
+                                                        <div style="font-size: 12px; line-height: 20px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
+                                                            <strong style="color: #0b2948; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">Username:</strong>&nbsp; 
+                                                            <strong>
+                                                                <span style="color: #38761d; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">&nbsp; &nbsp;&nbsp; 
+                                                                    <span style="font-size: small; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">{{USERNAME}}</span>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                        <div style="font-size: 12px; line-height: 20px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
+                                                            <strong style="color: #0b2948; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">User ID:&nbsp;</strong>&nbsp; &nbsp; &nbsp; &nbsp; 
+                                                            <span style="color: #38761d; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">&nbsp; 
+                                                                <span style="font-size: small; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
+                                                                    <strong>{{ID}}</strong>
+                                                                </span>
+                                                            </span>
+                                                        </div>
+                                                        <div style="color: #5b6d83; font-size: 12px; line-height: 20px; margin-top: 3px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">
+                                                            <strong>
+                                                                <span style="color: #800000; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">Status:</span>
+                                                            </strong>&nbsp;
+                                                            <span style="color: #808080; font-size: 13px; font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;">Pending Compliance Verification.</span>
+                                                        </div>
                                                       </td>
                                                       <td style="width: 41.7132%; height: 113px;" align="right" valign="top">
                                                         <span style="display: inline-block; background: #fff1f1; color: #b42323; border: 1px solid #ffcccc; border-radius: 0px; padding: 5px 13px; font-size: 10px; white-space: nowrap;">
@@ -414,7 +538,7 @@
                 </tr>
             </tbody>
         </table>
-`;
+    `;
 
     function renderEmail() {
         let displayName = document.getElementById('displayNameInput').value || "";
